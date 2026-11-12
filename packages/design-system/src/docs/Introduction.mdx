@@ -22,7 +22,7 @@ The system is a ladder of four levels. Each level is built only from the one bel
 | Tokens | `tokens/tokens.json` (W3C DTCG) → Tailwind theme for web, typed values for native | — | Foundations |
 | Core | `Button`, `InputField`, `Badge`, `Icon`: generic controls with no banking knowledge | tokens | Core |
 | Banking | `TransactionCard`, `ZakatCalculator`, `Money`: where Mal's domain lives | core | Banking |
-| Screens | Product screens in the apps. "Example: Home screen" is one, with no custom styling | banking + core | Banking |
+| Screens | Product screens in the apps, with no custom styling. `apps/mobile/App.tsx` is one; see the Native app page | banking + core | Native app |
 
 The banking layer is the reason this is Mal's system and not a generic kit: Sharia rules, Zakat wording and money handling are written once there, and every product and platform inherits them. New domain pieces (a Halal-investment badge, a compliance indicator) go in that layer, composed from core.
 

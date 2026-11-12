@@ -65,7 +65,7 @@ packages/design-system/
   src/banking/             ← TransactionCard, ZakatCalculator, money: built only from core/
   src/theme/               ← ThemeProvider / useTheme (web + native)
   src/index.ts             ← web entry          src/index.native.ts ← native entry
-  src/docs/                ← Storybook pages and the "Example: Home screen" story
+  src/docs/                ← Storybook pages (Introduction, Tokens, Native app)
   scripts/                 ← build-tokens.ts, new-component.ts
 apps/mobile/               ← Expo app consuming the package exactly as an external app would
 ```
