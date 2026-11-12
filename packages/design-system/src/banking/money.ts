@@ -11,11 +11,12 @@ export interface Money {
 
 export const DEFAULT_LOCALE = 'en-AE';
 
-const fractionDigits = (currency: string) =>
+/** Decimal places of a currency's minor unit: AED 2, KWD/BHD/OMR 3, JPY 0. */
+export const minorDigits = (currency: string) =>
   new Intl.NumberFormat('en', { style: 'currency', currency }).resolvedOptions().maximumFractionDigits ?? 2;
 
 export function toMajor({ minor, currency }: Money): number {
-  return minor / 10 ** fractionDigits(currency);
+  return minor / 10 ** minorDigits(currency);
 }
 
 export function formatMoney(money: Money, locale: string = DEFAULT_LOCALE): string {
@@ -27,15 +28,18 @@ export function formatMoney(money: Money, locale: string = DEFAULT_LOCALE): stri
 }
 
 /**
- * Parses user input like "12,500.5" into minor units.
- * Returns null for anything that isn't a non-negative amount with at most 2 decimals.
+ * Parses user input like "12,500.5" into minor units of `currency` (string maths, no floats).
+ * Returns null for anything that isn't a non-negative amount with at most the currency's
+ * decimals (2 for AED, 3 for KWD, none for JPY).
  */
-export function parseAmount(input: string): number | null {
+export function parseAmount(input: string, currency = 'AED'): number | null {
+  const digits = minorDigits(currency);
   const cleaned = input.replace(/[\s,]/g, '');
   if (cleaned === '') return 0;
-  if (!/^\d+(\.\d{0,2})?$|^\.\d{1,2}$/.test(cleaned)) return null;
+  const pattern = digits === 0 ? /^\d+$/ : new RegExp(`^\\d+(\\.\\d{0,${digits}})?$|^\\.\\d{1,${digits}}$`);
+  if (!pattern.test(cleaned)) return null;
   const [whole = '0', frac = ''] = cleaned.split('.');
-  return Number(whole || '0') * 100 + Number(frac.padEnd(2, '0'));
+  return Number(whole || '0') * 10 ** digits + Number(frac.padEnd(digits, '0') || '0');
 }
 
 /** Formats with an explicit locale-aware sign: "+AED 1,200.00" / "-AED 120.50". */

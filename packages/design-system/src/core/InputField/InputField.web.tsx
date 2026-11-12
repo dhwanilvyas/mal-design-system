@@ -17,14 +17,20 @@ const fieldStyles = variants({
       /** Money entry: large tabular figures, currency adornment, decimal keypad on mobile. */
       amount: 'text-2xl font-semibold tabular',
     },
-    size: { md: 'h-10', lg: 'h-12' },
+    // Height comes from the compound rules below: `amount` has its own fixed height,
+    // so exactly one height class is ever applied.
+    size: { md: '', lg: '' },
     invalid: {
       true: 'border-danger',
       false: 'border-border-strong hover:has-[input:enabled]:border-fg-muted',
     },
   },
   defaults: { variant: 'default', size: 'md', invalid: 'false' },
-  compound: [{ variant: 'amount', className: 'h-16' }],
+  compound: [
+    { variant: 'default', size: 'md', className: 'h-10' },
+    { variant: 'default', size: 'lg', className: 'h-12' },
+    { variant: 'amount', className: 'h-16' },
+  ],
 });
 
 export type { InputFieldSize, InputFieldVariant } from './InputField.types';

@@ -67,7 +67,8 @@ export function InputField({
           </Text>
         )}
         <TextInput
-          accessibilityLabel={accessibleLabel(label, currency)}
+          // "Amount (AED), required": native has no `required` attribute for screen readers to read.
+          accessibilityLabel={accessibleLabel(label, currency) + (required ? ', required' : '')}
           accessibilityLabelledBy={hideLabel ? undefined : labelId}
           accessibilityHint={a11yHint}
           accessibilityState={{ disabled: Boolean(disabled) }}

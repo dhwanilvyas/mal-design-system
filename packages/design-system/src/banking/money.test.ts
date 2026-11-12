@@ -21,6 +21,18 @@ describe('parseAmount', () => {
     expect(parseAmount('0.29')).toBe(29);
     expect(parseAmount('1.15')).toBe(115);
   });
+
+  it("uses the currency's minor units", () => {
+    expect(parseAmount('1.234', 'KWD')).toBe(1234);
+    expect(parseAmount('1.5', 'BHD')).toBe(1500);
+    expect(parseAmount('1.2345', 'KWD')).toBeNull();
+    expect(parseAmount('500', 'JPY')).toBe(500);
+    expect(parseAmount('500.5', 'JPY')).toBeNull();
+  });
+
+  it('round-trips with formatMoney', () => {
+    expect(formatMoney({ minor: parseAmount('12.345', 'KWD')!, currency: 'KWD' }, 'en')).toMatch(/KWD\s?12\.345/);
+  });
 });
 
 describe('formatMoney', () => {

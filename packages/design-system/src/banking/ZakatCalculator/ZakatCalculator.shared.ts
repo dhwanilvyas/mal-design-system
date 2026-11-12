@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { DEFAULT_LOCALE, formatMoney, parseAmount, type Money } from '../money';
+import { DEFAULT_LOCALE, formatMoney, minorDigits, parseAmount, type Money } from '../money';
 import { calculateZakat, type ZakatAssets, type ZakatResult } from './calculateZakat';
 
 /**
@@ -27,7 +27,12 @@ const QUICK_FIELD = {
 export const ZAKAT_DISCLAIMER =
   'An estimate only, for wealth held for one full lunar year (hawl). Rulings vary between schools of thought; please consult a qualified scholar for your situation.';
 
-const INVALID_AMOUNT = 'Enter a positive amount with up to 2 decimals, e.g. 12,500.50';
+const invalidAmount = (currency: string) => {
+  const digits = minorDigits(currency);
+  return digits === 0
+    ? 'Enter a positive whole amount, e.g. 12,500'
+    : `Enter a positive amount with up to ${digits} decimals, e.g. 12,500.${'5'.repeat(digits)}`;
+};
 
 export type ZakatChange = ZakatResult & { currency: string };
 
@@ -66,14 +71,14 @@ export function useZakatCalculator({
     const amounts: Partial<ZakatAssets> = {};
     const errors: Partial<Record<ZakatField, string>> = {};
     for (const field of visible) {
-      const minor = parseAmount(values[field] ?? '');
-      if (minor === null) errors[field] = INVALID_AMOUNT;
+      const minor = parseAmount(values[field] ?? '', currency);
+      if (minor === null) errors[field] = invalidAmount(currency);
       else amounts[field] = minor;
     }
     return { amounts, errors, hasErrors: Object.keys(errors).length > 0 };
     // visible is derived from variant
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values, variant]);
+  }, [values, variant, currency]);
 
   const result = useMemo(() => calculateZakat(parsed.amounts, nisab.minor), [parsed.amounts, nisab.minor]);
   const fmt = (minor: number) => formatMoney({ minor, currency }, locale);

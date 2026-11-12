@@ -70,7 +70,9 @@ export function ZakatCalculator({ title = 'Zakat calculator', onPay, style, ...p
           <Text style={styles.srOnly}>{z.announcement}</Text>
 
           {z.hasInput && !z.hasErrors && !z.result.isDue && (
-            <View style={styles.progressWrap}>
+            // Hidden from AT: it updates per keystroke inside the live region, and the
+            // debounced summary above already says how far below nisab the total is.
+            <View style={styles.progressWrap} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
               <View style={[styles.track, { backgroundColor: colors.border }]}>
                 <View style={[styles.bar, { width: `${z.progress}%`, backgroundColor: colors.accent }]} />
               </View>
