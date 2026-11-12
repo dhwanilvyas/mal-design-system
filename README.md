@@ -108,7 +108,7 @@ The goal is that a new engineer can ship a correct component in an afternoon wit
 
 **0. Check you need one, and where it goes.** Can it be composed from existing components (see `ZakatCalculator`)? Is it needed by **two or more product surfaces**? If it's only used once, build it in the product app first and promote it later. Then pick the folder: `core` for a generic control (Switch, Tabs), `banking` if it knows about money, accounts or Islamic finance (ShariaBadge).
 
-**1. Agree the API with design before writing code.** Open a [Component proposal](https://github.com/dhwanilvyas/mal-design-system/issues/new?template=component-proposal.yml) issue: purpose, variants (named by *intent*, e.g. `danger`, not `red`), states, content rules, keyboard and screen-reader behaviour, RTL notes. A product designer and one DS maintainer approve it. That API becomes `Name.types.ts`.
+**1. Agree the API with design before writing code.** Open an issue with: purpose, variants (named by *intent*, e.g. `danger`, not `red`), states, content rules, keyboard and screen-reader behaviour, RTL notes. A product designer and one DS maintainer approve it. That API becomes `Name.types.ts`.
 
 **2. Scaffold.**
 
@@ -140,14 +140,6 @@ This creates `Name.types.ts`, `Name.web.tsx`, `Name.native.tsx`, a story and a t
 - **Change a value in `tokens.json`, never in a component.** Run `npm run tokens`; both platforms pick it up. Check the Foundations/Tokens page and the contrast tests in both themes.
 - **Add a story** for any new variant or state, and a test for new behaviour.
 - **Breaking changes** (renamed or removed props/variants, token renames): deprecate first with a JSDoc `@deprecated` and keep the old name working for a release, then remove.
-
-## Contributing without code (designers, PMs, compliance)
-
-You don't need a terminal to shape the system:
-
-- **Browse** the [playground](https://mal-design-system.vercel.app). Each component page has controls to try every variant, light/dark and RTL, plus an accessibility panel. Token names are on Foundations/Tokens and match the names to use in Figma.
-- **Propose** through GitHub issue forms. These are browser forms, so no markdown is needed: [Component proposal](https://github.com/dhwanilvyas/mal-design-system/issues/new?template=component-proposal.yml), [Token change](https://github.com/dhwanilvyas/mal-design-system/issues/new?template=token-change.yml), [Visual or accessibility bug](https://github.com/dhwanilvyas/mal-design-system/issues/new?template=visual-bug.yml).
-- **Review** what you'd ship. [`CODEOWNERS`](.github/CODEOWNERS) makes a product designer an approver for tokens, components and docs, and adds Sharia-compliance review for Zakat logic and wording. Every pull request gets a Vercel preview of the playground to review visually (open to members of the Vercel team).
 
 ## Conventions
 
