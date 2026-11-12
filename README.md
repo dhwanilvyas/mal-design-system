@@ -179,7 +179,6 @@ You don't need a terminal to shape the system:
 | `npm run build` | Storybook + the native app's browser build (copied to `/native`) in `packages/design-system/storybook-static/` (what Vercel deploys) |
 | `npm run build:lib` | Web bundle + `.d.ts` in `packages/design-system/dist/` |
 | `npm run new:component -- Name [--group core\|banking]` | Scaffold a cross-platform component |
-| `npm run publish:mobile` | Publish the demo app as an EAS Update (opens in Expo Go for signed-in Expo project members) |
 
 ## Known limitations
 

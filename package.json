@@ -19,7 +19,6 @@
     "mobile": "npm run start -w @mal/mobile",
     "ios": "npm run ios -w @mal/mobile",
     "android": "npm run android -w @mal/mobile",
-    "publish:mobile": "npm run update:preview -w @mal/mobile",
     "build:storybook": "npm run build -w @mal/design-system"
   },
   "overrides": {
