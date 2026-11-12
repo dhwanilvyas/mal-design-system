@@ -1,0 +1,46 @@
+name: Token change
+description: Change a colour, type size, spacing, radius or shadow value, or add a new token.
+title: "[Token] "
+labels: ["tokens", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tokens change every product at once, so a designer and an engineer both approve.
+        Contrast is tested automatically: if a new colour fails WCAG in either theme, the change can't merge.
+        Token names are listed on the playground's Foundations/Tokens page.
+  - type: input
+    id: token
+    attributes:
+      label: Which token?
+      description: Use the semantic name where possible (brand, fg-muted, danger-subtle), not a palette value.
+      placeholder: fg-muted
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Change type
+      options:
+        - Change an existing value
+        - Add a new token
+        - Rename or remove a token (breaking)
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: From → to
+      description: Give the value for both the light and the dark theme.
+      placeholder: |
+        Light: #5e574b → #57503f
+        Dark:  unchanged
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why?
+      description: What's wrong today, and where does it show up? Screenshots help.
+    validations:
+      required: true

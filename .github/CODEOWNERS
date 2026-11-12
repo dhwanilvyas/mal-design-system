@@ -1,0 +1,15 @@
+# Who must approve changes. The team names are placeholders for Mal's GitHub teams.
+# Engineers own the code; designers co-own anything that changes how the product looks or reads.
+
+*                                               @mal/design-system-maintainers
+
+# Values every product inherits: a designer and an engineer approve.
+/packages/design-system/tokens/                 @mal/design-system-maintainers @mal/product-design
+
+# Component behaviour and docs: designers review what users see.
+/packages/design-system/src/core/               @mal/design-system-maintainers @mal/product-design
+/packages/design-system/src/banking/            @mal/design-system-maintainers @mal/product-design
+/packages/design-system/src/docs/               @mal/design-system-maintainers @mal/product-design
+
+# Islamic-finance logic and wording: Sharia-compliance review as well.
+/packages/design-system/src/banking/ZakatCalculator/   @mal/design-system-maintainers @mal/product-design @mal/sharia-compliance

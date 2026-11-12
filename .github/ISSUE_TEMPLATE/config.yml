@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Browse the components
+    url: https://mal-design-system.vercel.app
+    about: Check whether a component or variant already exists before proposing one.

@@ -32,6 +32,17 @@ if (existsSync(dir)) {
   console.error(`✖ src/${relDir} already exists`);
   process.exit(1);
 }
+
+// New exports go just above the "// Theme" line in each entry. Check before writing anything,
+// so a missing marker fails loudly instead of leaving an unexported component behind.
+const MARKER = '\n// Theme';
+const entries = [['index.ts', 'web'], ['index.native.ts', 'native']] as const;
+for (const [entry] of entries) {
+  if (!readFileSync(src(entry), 'utf8').includes(MARKER)) {
+    console.error(`✖ src/${entry} has no "// Theme" line to insert the export above. Restore it and re-run.`);
+    process.exit(1);
+  }
+}
 mkdirSync(dir, { recursive: true });
 
 const files: Record<string, string> = {
@@ -140,10 +151,10 @@ describe('${name}', () => {
 for (const [file, content] of Object.entries(files)) writeFileSync(dir + file, content);
 
 // Export from both entries, just above the "// Theme" section.
-for (const [entry, platform] of [['index.ts', 'web'], ['index.native.ts', 'native']] as const) {
+for (const [entry, platform] of entries) {
   const file = src(entry);
   const line = `export { ${name}, type ${name}Props, type ${name}Variant } from './${relDir}/${name}.${platform}';\n`;
-  writeFileSync(file, readFileSync(file, 'utf8').replace('\n// Theme', `${line}\n// Theme`));
+  writeFileSync(file, readFileSync(file, 'utf8').replace(MARKER, `${line}${MARKER}`));
 }
 
 console.log(`✔ Created src/${relDir}/ (types, web, native, story, test) and exported it from both entries.
