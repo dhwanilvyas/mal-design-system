@@ -14,7 +14,7 @@ export interface ButtonProps extends ButtonBaseProps, Omit<PressableProps, 'chil
 /** Same intent → token mapping as Button.web.tsx's variant classes. */
 const variantColors: Record<ButtonVariant, { bg: SemanticColor | 'transparent'; pressed: SemanticColor; fg: SemanticColor; border?: SemanticColor }> = {
   primary: { bg: 'brand', pressed: 'brand-active', fg: 'fg-on-brand' },
-  secondary: { bg: 'surface', pressed: 'surface-sunken', fg: 'fg', border: 'border-strong' },
+  secondary: { bg: 'surface', pressed: 'surface-active', fg: 'fg', border: 'border-strong' },
   tertiary: { bg: 'transparent', pressed: 'brand-subtle', fg: 'brand-fg' },
   danger: { bg: 'danger', pressed: 'danger-hover', fg: 'fg-inverse' },
 };

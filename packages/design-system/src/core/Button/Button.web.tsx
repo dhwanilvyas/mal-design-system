@@ -17,7 +17,7 @@ export const buttonStyles = variants({
       primary: 'bg-brand text-fg-on-brand enabled:hover:bg-brand-hover enabled:active:bg-brand-active',
       /** Alternative actions that sit next to a primary. */
       secondary:
-        'border border-border-strong bg-surface text-fg enabled:hover:bg-surface-hover enabled:active:bg-surface-sunken',
+        'border border-border-strong bg-surface text-fg enabled:hover:bg-surface-hover enabled:active:bg-surface-active',
       /** Low-emphasis actions: "View all", "Cancel" in dense layouts. */
       tertiary: 'bg-transparent text-brand-fg enabled:hover:bg-brand-subtle',
       /** Destructive or irreversible actions (cancel card, delete payee). */

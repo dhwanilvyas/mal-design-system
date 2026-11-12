@@ -31,6 +31,8 @@ export const contrastPairs: ReadonlyArray<{ fg: SemanticColor; bg: SemanticColor
   { fg: 'fg-subtle', bg: 'surface', min: 4.5 },
   { fg: 'fg-on-brand', bg: 'brand', min: 4.5 },
   { fg: 'fg-on-brand', bg: 'brand-hover', min: 4.5 },
+  { fg: 'fg-on-brand', bg: 'brand-active', min: 4.5 },
+  { fg: 'fg', bg: 'surface-active', min: 4.5 },
   { fg: 'fg-inverse', bg: 'danger', min: 4.5 },
   { fg: 'brand-fg', bg: 'surface', min: 4.5 },
   { fg: 'brand-fg', bg: 'brand-subtle', min: 4.5 },
