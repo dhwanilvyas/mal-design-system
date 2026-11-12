@@ -13,6 +13,40 @@ Tokens and accessible components for Mal's products, on **web and React Native**
 | `ZakatCalculator` | quick · detailed | Built only from the parts above; shared `useZakatCalculator()` hook; pure, tested `calculateZakat()` |
 | `Badge`, `Icon` | 6 tones · 16 icons | Building blocks, also exported |
 
+## How it's built: a ladder
+
+```mermaid
+flowchart TB
+  subgraph screens["Screens, in each app"]
+    direction LR
+    web["Web apps"]
+    mobile["Mobile app (React Native)"]
+  end
+  subgraph domains["Domains: Mal's product logic"]
+    direction LR
+    banking["banking/<br/>TransactionCard, ZakatCalculator, Money"]
+    travel["travel/ (a future domain)<br/>FlightCard, FareBadge"]
+  end
+  core["core/: generic controls<br/>Button, InputField, Badge, Icon"]
+  tokens["tokens.json: the only values<br/>→ theme.css (web), tokens.generated.ts (native)"]
+
+  screens --> domains --> core --> tokens
+  banking -. "no imports between domains" .- travel
+
+  classDef app fill:#ffffff,stroke:#7c7466,color:#1c1915
+  classDef sys fill:#ecf7f3,stroke:#0f5644,color:#1c1915
+  classDef future fill:#fbf7ec,stroke:#77521e,color:#1c1915,stroke-dasharray:5 4
+  classDef tok fill:#0f5644,stroke:#0f5644,color:#ffffff
+  class web,mobile app
+  class banking,core sys
+  class travel future
+  class tokens tok
+  style screens fill:none,stroke:#cbc4b6
+  style domains fill:none,stroke:#cbc4b6
+```
+
+Each level is built only from the one below it. `core/` knows nothing about money; `banking/` is where Mal's domain lives, so Zakat rules, money handling and Sharia wording are written once and every product and platform inherits them. Lint enforces the direction today: `core/` can't import `banking/`, and no component can hard-code a colour. `banking/` is the first domain, not the only one: a new product line (travel, insurance) is a sibling folder with the same rules, and anything two domains need is promoted to `core/`.
+
 ## Using it in an app
 
 Product apps can live in this repo (like `apps/mobile`) or in their own repos. Either way they install one package: `npm install @mal/design-system`. The same import works on both platforms, and each gets its own implementation:
@@ -81,7 +115,7 @@ packages/design-system/
 apps/mobile/               ← Expo app consuming the package exactly as an external app would
 ```
 
-The folders are a ladder: **tokens → core → banking → screens**. Each level is built only from the one below it, and lint enforces the direction (`core/` can't import `banking/`, components can't hard-code colours). `banking/` is where Mal's domain lives, so Zakat rules, money handling and Sharia wording are written once and every product and platform inherits them.
+The folders follow the ladder [above](#how-its-built-a-ladder).
 
 ### How a component is laid out
 
