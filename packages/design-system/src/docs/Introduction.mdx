@@ -1,0 +1,35 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+# Mal Design System
+
+A focused foundation for Mal's web products: **tokens, accessible React components, and this playground**.
+The look is trustworthy, modern and minimal. Deep emerald carries the brand, gold is a sparing accent, and warm "sand" neutrals keep it from feeling clinical.
+
+## Try it
+
+- Use the **Theme** and **Direction** toolbar buttons (top bar) to switch light/dark and LTR/RTL (Arabic) on any story.
+- The **Accessibility** panel runs axe on every story. **Interactions** shows the `play` tests on Button and ZakatCalculator.
+- Every component has a **Playground** story with live controls.
+
+## What's inside
+
+One package, `@mal/design-system`, for **web and React Native**. This playground shows the web implementations; `apps/mobile` in the repo is the same components running natively.
+
+| Part | What | Sidebar |
+| --- | --- | --- |
+| Tokens | `tokens/tokens.json` (W3C DTCG) → Tailwind theme for web, typed values for native | Foundations |
+| Core | `Button`, `InputField`, `Badge`, `Icon`: generic controls with no banking knowledge | Core |
+| Banking | `TransactionCard`, `ZakatCalculator` and `Money` utilities, composed from core | Banking |
+
+Every component is split into `Name.types.ts` (the shared contract), `Name.web.tsx` and `Name.native.tsx`. Logic such as validation, Zakat maths and screen-reader text lives in shared files, so the platforms can't drift apart. A web app importing `Button` gets the web file; a React Native app gets the native one, with no configuration.
+
+Guardrails: Tailwind's default palette is removed, WCAG contrast tests run on token pairs, axe tests run per component, and lint bans hex colours and cross-platform imports.
+
+## Principles
+
+1. **Semantic over literal.** Components say `bg-brand`, never `#0f5644` or `emerald-700`. Themes are a token swap.
+2. **Accessible by construction.** `InputField` cannot exist without a label. Status is never colour-only. Money is announced in words.
+3. **Money is integers.** All amounts are `{ minor, currency }`. Formatting happens at the edge with `Intl`.
+4. **RTL is first-class.** Logical properties (`ms-*`, `text-start`) on web and flex `row` on native, so Arabic layouts mirror without overrides.

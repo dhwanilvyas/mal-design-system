@@ -15,9 +15,12 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Tokens in sync, types, lint, unit + a11y tests
+      - name: Tokens in sync, types (web + native), lint, unit + a11y tests
         run: npm run verify
-      - name: Build Storybook
+      - name: Build Storybook (web playground)
         run: npm run build
-      - name: Build library
+      - name: Build web library
         run: npm run build:lib
+      - name: Bundle the React Native app (proves Metro resolves the native entry)
+        working-directory: apps/mobile
+        run: npx expo export --platform ios --output-dir /tmp/expo-export

@@ -1,0 +1,93 @@
+{
+  "name": "@mal/design-system",
+  "version": "0.1.0",
+  "description": "Mal design system: JSON design tokens and accessible components for web (React + Tailwind) and React Native.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "react-native": "./src/index.native.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tailwind.css": "./tailwind.css",
+    "./tokens.json": "./tokens/tokens.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "tokens",
+    "tailwind.css",
+    "!src/**/*.test.*",
+    "!src/**/*.stories.*",
+    "!src/docs",
+    "!src/test"
+  ],
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "build": "npm run build:storybook",
+    "build:storybook": "storybook build -o storybook-static",
+    "build:lib": "vite build -c vite.lib.config.ts && tsc -p tsconfig.build.json",
+    "tokens": "node scripts/build-tokens.ts",
+    "tokens:check": "node scripts/build-tokens.ts --check",
+    "new:component": "node scripts/new-component.ts",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.native.json",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify": "npm run tokens:check && npm run typecheck && npm run lint && npm run test"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0 || ^19.0.0",
+    "react-dom": "^18.3.0 || ^19.0.0",
+    "react-native": ">=0.79",
+    "react-native-svg": ">=15"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-svg": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@storybook/addon-a11y": "^10.6.7",
+    "@storybook/addon-docs": "^10.6.7",
+    "@storybook/react-vite": "^10.6.7",
+    "@tailwindcss/vite": "^4.3.5",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.10",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "axe-core": "^4.14.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-storybook": "^10.6.7",
+    "globals": "^17.14.0",
+    "jsdom": "^31.0.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "storybook": "^10.6.7",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}

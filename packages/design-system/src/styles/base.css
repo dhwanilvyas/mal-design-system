@@ -1,0 +1,26 @@
+/* Base styles shared by every Mal surface. Imported via @mal/tokens/tailwind.css. */
+
+@layer base {
+  :root {
+    font-family: var(--font-sans);
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Tabular figures for amounts, so columns of money line up. */
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Respect reduced motion globally for anything using our transition utilities. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

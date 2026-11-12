@@ -37,7 +37,7 @@
 
 <h2>1. Decisions &amp; trade-offs</h2>
 
-<h3>Styling: Tailwind v4 over CSS-in-JS</h3>
+<h3>Styling (web): Tailwind v4 over CSS-in-JS</h3>
 <table>
   <tr><th style="width:24%">Criterion</th><th>Why it decided the choice</th></tr>
   <tr><td>Runtime cost</td><td>Zero runtime. Runtime CSS-in-JS (Emotion, styled-components) serialises and injects styles during render. A banking app is used daily on mid-range phones, and we shouldn't spend that budget on styling.</td></tr>
@@ -48,7 +48,10 @@
 <p><strong>Costs I accepted:</strong> long class strings (contained in one typed <code>variants()</code> map per component); no type-checking of class names; and class-conflict ambiguity on overrides. I chose <em>not</em> to ship <code>tailwind-merge</code>: <code>className</code> is for layout only and visual changes go through variants, which keeps the API narrow and makes "why does it look different?" answerable. <strong>Runner-up:</strong> vanilla-extract (zero-runtime and typed). I'd revisit it if typed style APIs became a priority, but it adds a build plugin to every consuming app.</p>
 
 <h3>Token architecture</h3>
-<p>Two tiers: <strong>primitives</strong> (raw palette) → <strong>semantic</strong> (<code>brand</code>, <code>fg-muted</code>, <code>danger-subtle</code>), mapped per theme. They're authored in TypeScript, so a theme missing a key is a type error, and they're compiled to CSS by a ~100-line script with a <code>--check</code> mode in CI. Text/background pairs are declared alongside the tokens and asserted against WCAG 2.2 for <em>every</em> theme. That test caught input borders at 2.8:1 (below the 3:1 non-text minimum) during the build. I chose TS over DTCG JSON + Style Dictionary because it's one less tool at this size. I'd switch once Figma Variables sync or native apps need the same source.</p>
+<p>Authored once in <strong>JSON (W3C DTCG format)</strong>, the format Figma Variables export, so design and code can share one file and no platform owns the source. Two tiers: <strong>primitives</strong> (raw palette) → <strong>semantic</strong> (<code>brand</code>, <code>fg-muted</code>, <code>danger-subtle</code>) as aliases per theme. A ~200-line script compiles it to a Tailwind theme for web and typed TS values for native, fails if any theme misses a key, and has a <code>--check</code> mode in CI. Text/background pairs are asserted against WCAG 2.2 for <em>every</em> theme. That test caught input borders at 2.8:1 (below the 3:1 non-text minimum) during the build. I wrote the script instead of adopting Style Dictionary because it's one less tool at this size. I'd switch once there are more targets (Android XML, iOS Swift).</p>
+
+<h3>Cross-platform: one package, the right file per platform</h3>
+<p>Product apps may live in this repo or their own, on web or React Native, so the system is one npm package with two entries chosen by the bundler. Metro matches the <code>react-native</code> export condition and compiles <code>index.native.ts</code>; web bundlers get a prebuilt <code>dist/</code> from <code>index.ts</code>. <code>import { Button } from '@mal/design-system'</code> needs zero configuration in either (an Expo app and Storybook prove it, and CI bundles the Expo app). Each component is <code>Name.types.ts</code> (the contract), <code>Name.web.tsx</code> (Tailwind) and <code>Name.native.tsx</code> (StyleSheet from the same tokens). Logic is written once in shared files: Zakat maths, validation, money formatting and screen-reader text. Lint blocks cross-platform imports, and a parity test fails if the two entries export different names. <strong>Why not one universal implementation</strong> (react-native-web, NativeWind)? Web would ship a native abstraction layer and lose semantic HTML, and NativeWind's Tailwind v4 support is young. Sharing tokens, contracts and logic gets most of the reuse with none of that risk. <strong>Cost:</strong> two render files per component.</p>
 
 <h3>Component API principles</h3>
 <ul>
@@ -63,16 +66,16 @@
 <ul>
   <li>Translated component copy (layouts are RTL-ready; strings are English)</li>
   <li>Overlay components (Dialog, Select, Toast). Focus management is where DIY systems fail, so they deserve dedicated time.</li>
-  <li>Visual regression, package publishing, Figma sync</li>
+  <li>Visual regression, registry publishing, automated native component tests (native is covered by types, a CI bundle and the demo app)</li>
   <li>Arabic type ramp (Arabic needs more line height than Latin)</li>
 </ul></div>
 <div><strong>With more time</strong>
 <ol>
   <li>Chromatic visual tests + Storybook test runner in CI</li>
   <li>i18n of component strings + Arabic typography tokens, reviewed with a native-speaking designer</li>
-  <li>Figma Variables ↔ token sync (DTCG) so names match 1:1</li>
+  <li>Figma Variables ↔ tokens.json sync (already DTCG, so it's an import/export job)</li>
   <li>Dialog / Select / Toast on a shared focus and overlay layer</li>
-  <li>Changesets + canary releases; adoption-tracking script (see §4)</li>
+  <li><code>jest-expo</code> tests for native components; Changesets + canary releases; adoption-tracking script (see §4)</li>
 </ol></div>
 </div>
 
@@ -97,7 +100,7 @@
   <tr><td>Token sprawl</td><td>Add a component tier (<code>button-bg</code> → <code>brand</code>) only where themes diverge. Token changes require a design + eng approver. DTCG JSON synced with Figma Variables.</td></tr>
   <tr><td>CI and review cost</td><td>Visual tests on changed stories only (TurboSnap), per-component bundle-size budgets, CODEOWNERS per component folder.</td></tr>
 </table>
-<p><strong>Versioning:</strong> one package (simpler for consumers than 50 micro-packages), tree-shakeable ESM, a changeset required on every PR, weekly release train, and canary builds from every PR so teams can test before merge.<br/>
+<p><strong>Versioning:</strong> one package for web and native (simpler for consumers than 50 micro-packages, and one version can never mismatch across platforms). Tree-shakeable ESM, a changeset required on every PR, weekly release train, and canary builds from every PR so teams can test before merge.<br/>
 <strong>Documentation:</strong> Storybook is the single source. Each component page has purpose, when <em>not</em> to use it, do/don't examples, keyboard and screen-reader behaviour, status and owner. Decisions are recorded as short ADRs in the repo. The changelog is generated from changesets.</p>
 <p><strong>Contribution without bottlenecks</strong> works through three tiers with clear service levels, so nobody waits on a meeting:</p>
 <ul>

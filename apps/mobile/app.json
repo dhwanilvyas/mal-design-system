@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Mal DS",
+    "slug": "mal-design-system-demo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.maldsdemo"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "output": "single",
+      "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4f6d7d5f-20ba-4222-abd4-1e2d8a7e49ca"
+      }
+    },
+    "owner": "dhwanilvyas",
+    "runtimeVersion": "exposdk:58.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/4f6d7d5f-20ba-4222-abd4-1e2d8a7e49ca"
+    },
+    "experiments": {
+      "baseUrl": "/native"
+    }
+  }
+}

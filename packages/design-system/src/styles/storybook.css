@@ -1,0 +1,5 @@
+/* Storybook (and tests) read component source directly, so scan src/ instead of dist/. */
+@import 'tailwindcss';
+@import './theme.css';
+@import './base.css';
+@source '../';

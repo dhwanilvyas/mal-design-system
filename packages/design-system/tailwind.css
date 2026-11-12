@@ -1,0 +1,13 @@
+/*
+ * For web apps using Tailwind CSS v4. In the app's stylesheet:
+ *
+ *   @import 'tailwindcss';
+ *   @import '@mal/design-system/tailwind.css';
+ *
+ * Adds the Mal theme (replacing Tailwind's default palette and scales, so only Mal
+ * tokens compile, in the app's own code too) and lets Tailwind find the classes
+ * used inside the components.
+ */
+@import './src/styles/theme.css';
+@import './src/styles/base.css';
+@source './dist';
