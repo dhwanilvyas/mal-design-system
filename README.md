@@ -47,6 +47,17 @@ import { Button, ThemeProvider, TransactionCard } from '@mal/design-system';
 
 Event props follow each platform's convention (`onClick` on web, `onPress` on native); everything else is identical. App code can use tokens directly too: `const { colors } = useTheme()`, or `import { spacing, radius } from '@mal/design-system'`.
 
+**Measuring adoption (web):** every component stamps its root with `data-mal="Name"`. A small probe counts them on a live page, plus any interactive element (`button`, `input`, `a`, `role="button"`) that has *no* system component above it, and reports coverage. It runs in idle time, never during render, and sends nothing while the tab is hidden.
+
+```ts
+import { installMalProbe } from '@mal/design-system/probe';
+
+installMalProbe({ app: 'onboarding', sampleRate: 0.05, report: (r) => analytics.track('ds.coverage', r) });
+// → { app, route, components: { Button: 12, InputField: 4 }, unmanaged: { button: 1 }, coverage: 0.94 }
+```
+
+A plain `<button>` someone wrote instead of `<Button>` shows up as `unmanaged`, per route, in production. It's a metric, not a gate: lint and CI are the gates.
+
 ## Getting started in this repo
 
 ```bash

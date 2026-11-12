@@ -68,7 +68,7 @@ export function InputField({
   const leading = prefix ?? (currency ? currency : null);
 
   return (
-    <div className={cx('flex flex-col gap-1.5', className)}>
+    <div data-mal="InputField" className={cx('flex flex-col gap-1.5', className)}>
       <label htmlFor={id} className={cx('text-sm font-medium text-fg', hideLabel && 'sr-only')}>
         {label}
         {currency && (

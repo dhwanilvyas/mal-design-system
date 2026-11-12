@@ -63,6 +63,7 @@ export function Button({
 
   return (
     <button
+      data-mal="Button"
       // Default to "button": an un-typed button inside a form submits it, a classic footgun.
       type={type}
       className={buttonStyles({ variant, size, fullWidth: fullWidth ? 'true' : 'false' }, className)}

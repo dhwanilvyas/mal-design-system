@@ -13,6 +13,7 @@ export function Icon({ name, size = 20, title, ...rest }: IconProps) {
   const a11y = title ? { role: 'img', 'aria-label': title } : { 'aria-hidden': true as const };
   return (
     <svg
+      data-mal="Icon"
       width={size}
       height={size}
       viewBox="0 0 24 24"

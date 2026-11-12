@@ -16,6 +16,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./probe": {
+      "types": "./dist/probe.d.ts",
+      "default": "./dist/probe.js"
+    },
     "./tailwind.css": "./tailwind.css",
     "./tokens.json": "./tokens/tokens.json",
     "./package.json": "./package.json"

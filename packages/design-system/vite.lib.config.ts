@@ -10,12 +10,19 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   build: {
-    lib: { entry: resolve(import.meta.dirname, 'src/index.ts'), formats: ['es'], fileName: 'index' },
+    lib: {
+      entry: {
+        index: resolve(import.meta.dirname, 'src/index.ts'),
+        // Adoption probe: a separate, dependency-free entry so apps can load it lazily.
+        probe: resolve(import.meta.dirname, 'src/probe.ts'),
+      },
+      formats: ['es'],
+    },
     sourcemap: true,
     rollupOptions: {
       external: [/^react($|\/)/, /^react-dom($|\/)/],
       // Components use state and handlers: mark the bundle as client code for React Server Components.
-      output: { banner: "'use client';" },
+      output: { banner: "'use client';", entryFileNames: '[name].js' },
     },
   },
 });

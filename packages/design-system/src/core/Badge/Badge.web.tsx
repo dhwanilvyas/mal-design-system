@@ -24,7 +24,7 @@ export interface BadgeProps extends BadgeBaseProps, Omit<ComponentPropsWithRef<'
 /** Small status label. Internal primitive used by other components; exported for product use. */
 export function Badge({ tone, icon, className, children, ...rest }: BadgeProps) {
   return (
-    <span className={badgeStyles({ tone }, className)} {...rest}>
+    <span data-mal="Badge" className={badgeStyles({ tone }, className)} {...rest}>
       {icon}
       {children}
     </span>

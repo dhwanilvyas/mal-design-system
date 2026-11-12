@@ -20,6 +20,7 @@ export function ZakatCalculator({ title = 'Zakat calculator', headingLevel = 2, 
 
   return (
     <section
+      data-mal="ZakatCalculator"
       aria-labelledby={headingId}
       className={cx('overflow-hidden rounded-xl border border-border bg-surface text-fg shadow-md', className)}
     >

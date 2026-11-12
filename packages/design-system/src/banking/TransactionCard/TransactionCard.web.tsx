@@ -95,10 +95,12 @@ export function TransactionCard({ onClick, className, ...props }: TransactionCar
 
   // Only phrasing content (spans) is used above, so the same markup is valid inside a <button>.
   return onClick ? (
-    <button type="button" className={classes} onClick={onClick}>
+    <button data-mal="TransactionCard" type="button" className={classes} onClick={onClick}>
       {content}
     </button>
   ) : (
-    <div className={classes}>{content}</div>
+    <div data-mal="TransactionCard" className={classes}>
+      {content}
+    </div>
   );
 }
