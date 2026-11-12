@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Mal Design System: Architecture &amp; Trade-offs</title>
+<style>
+  @page { size: A4; margin: 16mm 17mm 16mm; }
+  :root { --brand: #0f5644; --gold: #77521e; --fg: #1c1915; --muted: #5e574b; --line: #e2ddd2; --tint: #ecf7f3; }
+  * { box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif; color: var(--fg); font-size: 9.6pt; line-height: 1.45; margin: 0; }
+  h1 { font-size: 18pt; margin: 0 0 2pt; color: var(--brand); letter-spacing: -0.01em; }
+  .sub { color: var(--muted); margin: 0 0 10pt; font-size: 9pt; }
+  .sub a { color: var(--brand); }
+  h2 { font-size: 12pt; color: var(--brand); margin: 13pt 0 5pt; padding-bottom: 3pt; border-bottom: 1.5px solid var(--line); break-after: avoid; }
+  h3 { font-size: 10pt; margin: 8pt 0 3pt; break-after: avoid; }
+  p { margin: 0 0 5pt; }
+  ul, ol { margin: 0 0 6pt; padding-left: 15pt; }
+  li { margin: 0 0 2.5pt; }
+  strong { font-weight: 600; }
+  code { font-family: 'JetBrains Mono', Menlo, monospace; font-size: 8.4pt; background: #f7f5f0; padding: 0 2pt; border-radius: 2pt; }
+  table { width: 100%; border-collapse: collapse; margin: 3pt 0 7pt; font-size: 8.9pt; }
+  tr { break-inside: avoid; }
+  th, td { text-align: left; vertical-align: top; padding: 3.5pt 5pt; border-bottom: 1px solid var(--line); }
+  th { background: var(--tint); color: var(--brand); font-weight: 600; }
+  .tldr { background: var(--tint); border-left: 3px solid var(--brand); padding: 6pt 9pt; margin: 0 0 6pt; }
+  .note { color: var(--muted); font-size: 8.8pt; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12pt; }
+  .tag { display: inline-block; font-size: 7.8pt; font-weight: 600; color: var(--gold); background: #fbf7ec; border-radius: 8pt; padding: 0 5pt; }
+</style>
+</head>
+<body>
+
+<h1>Mal Design System: Architecture &amp; Trade-offs</h1>
+<p class="sub">Companion to the build. Repo: <a href="REPO_URL">REPO_URL</a> · Playground: <a href="STORYBOOK_URL">STORYBOOK_URL</a></p>
+
+<div class="tldr"><strong>In one paragraph.</strong> I built a small system that treats <em>constraints as the product</em>: tokens are the only values that compile, accessibility is enforced by tests rather than reviews, and the Mal-specific component (ZakatCalculator) is composed purely from system parts to prove the primitives hold up. The rollout plan makes the system speed up features already in flight rather than competing with them, and governance pushes policing into automation so the core team never becomes the bottleneck.</div>
+
+<h2>1. Decisions &amp; trade-offs</h2>
+
+<h3>Styling: Tailwind v4 over CSS-in-JS</h3>
+<table>
+  <tr><th style="width:24%">Criterion</th><th>Why it decided the choice</th></tr>
+  <tr><td>Runtime cost</td><td>Zero runtime. Runtime CSS-in-JS (Emotion, styled-components) serialises and injects styles during render. A banking app is used daily on mid-range phones, and we shouldn't spend that budget on styling.</td></tr>
+  <tr><td>Server components</td><td>No provider or context needed, so components work unchanged in Next.js App Router / RSC. Runtime CSS-in-JS needs client boundaries.</td></tr>
+  <tr><td>Theming</td><td>Tokens compile to CSS variables. Dark mode, a future Mal Premium/Business theme, or a light "island" inside a dark page is an attribute swap (<code>data-theme</code>) with no re-render, and it's readable by non-React code.</td></tr>
+  <tr><td>Governance</td><td>The decisive one. The token build <strong>removes Tailwind's default palette and spacing scale</strong>, so <code>bg-emerald-600</code> or <code>p-7</code> simply don't exist. "Use the tokens" goes from a review comment to a compile-time fact.</td></tr>
+</table>
+<p><strong>Costs I accepted:</strong> long class strings (contained in one typed <code>variants()</code> map per component); no type-checking of class names; and class-conflict ambiguity on overrides. I chose <em>not</em> to ship <code>tailwind-merge</code>: <code>className</code> is for layout only and visual changes go through variants, which keeps the API narrow and makes "why does it look different?" answerable. <strong>Runner-up:</strong> vanilla-extract (zero-runtime and typed). I'd revisit it if typed style APIs became a priority, but it adds a build plugin to every consuming app.</p>
+
+<h3>Token architecture</h3>
+<p>Two tiers: <strong>primitives</strong> (raw palette) → <strong>semantic</strong> (<code>brand</code>, <code>fg-muted</code>, <code>danger-subtle</code>), mapped per theme. They're authored in TypeScript, so a theme missing a key is a type error, and they're compiled to CSS by a ~100-line script with a <code>--check</code> mode in CI. Text/background pairs are declared alongside the tokens and asserted against WCAG 2.2 for <em>every</em> theme. That test caught input borders at 2.8:1 (below the 3:1 non-text minimum) during the build. I chose TS over DTCG JSON + Style Dictionary because it's one less tool at this size. I'd switch once Figma Variables sync or native apps need the same source.</p>
+
+<h3>Component API principles</h3>
+<ul>
+  <li><strong>Accessible by construction:</strong> <code>InputField</code> can't be created without a <code>label</code>. Status is never colour-only. Transactions are announced as "Spent/Received AED 120.50", not "minus". The Zakat result uses a <em>debounced</em> polite live region so screen readers aren't spammed per keystroke. <code>&lt;bdi&gt;</code> isolates merchant names, a real RTL bug I found ("e&amp;" reordering).</li>
+  <li><strong>Banking correctness:</strong> money is <code>{ minor, currency }</code> integers, never floats. Zakat maths is a pure, unit-tested function the Sharia team can review in isolation. Nisab is a prop, because it moves with the gold price and belongs to the backend.</li>
+  <li><strong>Least surprise:</strong> native props pass through, and buttons default to <code>type="button"</code>. <code>loading</code> uses <code>aria-disabled</code> so keyboard focus isn't lost mid-payment.</li>
+</ul>
+
+<h3>What I cut, and what I'd build next (in order)</h3>
+<div class="cols">
+<div><strong>Cut to stay in scope</strong>
+<ul>
+  <li>Translated component copy (layouts are RTL-ready; strings are English)</li>
+  <li>Overlay components (Dialog, Select, Toast). Focus management is where DIY systems fail, so they deserve dedicated time.</li>
+  <li>Visual regression, package publishing, Figma sync</li>
+  <li>Arabic type ramp (Arabic needs more line height than Latin)</li>
+</ul></div>
+<div><strong>With more time</strong>
+<ol>
+  <li>Chromatic visual tests + Storybook test runner in CI</li>
+  <li>i18n of component strings + Arabic typography tokens, reviewed with a native-speaking designer</li>
+  <li>Figma Variables ↔ token sync (DTCG) so names match 1:1</li>
+  <li>Dialog / Select / Toast on a shared focus and overlay layer</li>
+  <li>Changesets + canary releases; adoption-tracking script (see §4)</li>
+</ol></div>
+</div>
+
+<h2>2. Cross-functional rollout: 3 designers, 6 engineers, no feature freeze</h2>
+<p>The principle: <strong>adoption has to make this sprint's feature faster, or it won't happen.</strong> Nobody stops shipping to migrate. The system rides along with work already planned, and "done" means used in production, not merged into the library.</p>
+<table>
+  <tr><th style="width:13%">When</th><th style="width:43%">Design</th><th>Engineering</th></tr>
+  <tr><td><strong>Week 0</strong><br/>Prepare</td><td>With the design lead: screenshot audit of live product (count of button styles, greys, radii). Agree token names; publish the Figma library with <em>identical</em> names to code.</td><td>Same audit in code (unique hex values, local Button copies). This gives us the <strong>baseline for §4</strong>. Pick a pilot: one squad, one in-flight UI feature (e.g. transaction history).</td></tr>
+  <tr><td><strong>Week 1</strong><br/>Pilot</td><td>45-min demo for all 9 people, framed around their pain points from the audit. The pilot designer hands off using library components and tokens.</td><td>I pair with the pilot engineers on their real ticket. Open <code>#design-system</code> channel; office hours twice a week. API pain gets fixed within 48h. Responsiveness is what earns trust.</td></tr>
+  <tr><td><strong>Week 2</strong><br/>Ship &amp; learn</td><td>Pilot ships. 30-min retro with design + eng. Designers start annotating handoffs with component names.</td><td>"New code uses the system" norm, enforced as an ESLint <em>warning</em> on new files only. Escape hatch: build locally with a <code>// ds-gap</code> comment we track, so the system never blocks a release.</td></tr>
+  <tr><td><strong>Weeks 3–4</strong><br/>Spread</td><td>Second squad onboards. First design-led contribution (e.g. a Sharia-compliance badge) through the contribution process in §3.</td><td>One <strong>champion engineer per squad</strong> owns local questions. Day-30 review of metrics against the baseline, top <code>ds-gap</code> items become next month's roadmap.</td></tr>
+</table>
+<p><strong>What adoption looks like at day 30:</strong> two features in production built on the system; all six engineers have merged at least one PR using it; 100% of new screens are designed from the Figma library; at least one contribution from outside the core; the lint rule moves from warn to error for new files, by agreement in the retro, not by decree. For product managers, the pitch is fewer design-QA rounds and faster UI tickets, measured as in §4. I'd ask for one squad's pilot time, not a roadmap slot.</p>
+<p class="note"><strong>Risks:</strong> "the system slows me down" (mitigated by the escape hatch plus the 48h fix SLA); designers diverging in Figma (mitigated by a weekly 30-min crit with a system lens); me as single point of failure (mitigated by champions plus documented contribution tiers from week 3).</p>
+
+<h2>3. Scale &amp; governance: 10× components, 5 product teams</h2>
+<table>
+  <tr><th style="width:30%">What breaks</th><th>Response</th></tr>
+  <tr><td>Core team becomes the bottleneck</td><td>Federated contribution (below). The core team's job shifts from building everything to <em>platform</em>: tooling, review, docs.</td></tr>
+  <tr><td>One change ripples into 5 apps</td><td>Semver with Changesets; deprecate before removing (JSDoc <code>@deprecated</code> + dev-only console warning + codemod); at most one major per quarter, N-1 supported for 3 months.</td></tr>
+  <tr><td>Near-duplicate components</td><td>Status labels in Storybook (<span class="tag">alpha</span> <span class="tag">beta</span> <span class="tag">stable</span>), searchable RFCs, and the "two-team rule": incubate in the product, promote when a second team needs it.</td></tr>
+  <tr><td>Token sprawl</td><td>Add a component tier (<code>button-bg</code> → <code>brand</code>) only where themes diverge. Token changes require a design + eng approver. DTCG JSON synced with Figma Variables.</td></tr>
+  <tr><td>CI and review cost</td><td>Visual tests on changed stories only (TurboSnap), per-component bundle-size budgets, CODEOWNERS per component folder.</td></tr>
+</table>
+<p><strong>Versioning:</strong> one package (simpler for consumers than 50 micro-packages), tree-shakeable ESM, a changeset required on every PR, weekly release train, and canary builds from every PR so teams can test before merge.<br/>
+<strong>Documentation:</strong> Storybook is the single source. Each component page has purpose, when <em>not</em> to use it, do/don't examples, keyboard and screen-reader behaviour, status and owner. Decisions are recorded as short ADRs in the repo. The changelog is generated from changesets.</p>
+<p><strong>Contribution without bottlenecks</strong> works through three tiers with clear service levels, so nobody waits on a meeting:</p>
+<ul>
+  <li><strong>Tier 1, fixes / docs / variants within an existing API:</strong> any engineer, one CODEOWNER review, 2-business-day SLA.</li>
+  <li><strong>Tier 2, new component:</strong> RFC issue (purpose, variants named by intent, states, keyboard, RTL). Async review for 3 days, then design + eng sign-off. Built with the scaffolder, which already includes stories, tests and an axe check.</li>
+  <li><strong>Tier 3, tokens or breaking changes:</strong> a design-system council (one designer + one engineer per team, rotating, 30 min every two weeks).</li>
+</ul>
+<p>Automation does the policing: the default palette is removed, lint bans hex values, contrast and axe tests run, and visual diffs are checked. Human review can then focus on API and intent.</p>
+
+<h2>4. Measuring impact</h2>
+<table>
+  <tr><th style="width:21%">Metric</th><th style="width:43%">How it's measured</th><th>Signal and target</th></tr>
+  <tr><td><strong>1. Adoption coverage</strong></td><td>Weekly CI job using <code>react-scanner</code> across product repos: share of rendered UI components imported from the system vs local. A companion count of hard-coded colours and arbitrary values in product CSS.</td><td>Leading indicator that the system is <em>chosen</em>. Target about 60% of components in new surfaces at 3 months and 85% at 6; hard-coded colours trending toward zero.</td></tr>
+  <tr><td><strong>2. UI delivery speed</strong></td><td>Cycle time (first commit to production) for UI-labelled tickets from Linear/Jira + GitHub, comparing system-built vs not on similar-sized tickets. Plus design-QA rounds per feature.</td><td>The business outcome. Hypothesis: a meaningful drop in cycle time and QA rounds within two quarters. Reviewed as a trend against the week-0 baseline, not a single number.</td></tr>
+  <tr><td><strong>3. Consistency &amp; quality</strong></td><td>(a) Unique colour / font-size / radius values in shipped CSS, from a CSS-stats job on each production build. (b) axe violations on the top 10 flows via a nightly Playwright crawl. (c) Design-QA bugs tagged "inconsistency" or "a11y".</td><td>Unique values converge on the token count. Zero critical a11y violations on payment and onboarding flows. Inconsistency bugs per release trend down.</td></tr>
+</table>
+<p class="note"><strong>Guardrail:</strong> median time-to-merge for outside contributions. If it rises, the system is becoming the bottleneck, and that triggers a governance review before adoption suffers. A short quarterly survey of the 9 users covers what numbers can't.</p>
+
+</body>
+</html>
