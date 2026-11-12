@@ -2,7 +2,7 @@
 
 A focused, production-minded foundation for Mal's products, on **web and React Native**: JSON design tokens, accessible components, a Storybook playground, and an Expo demo app. It is trustworthy, modern and minimal. Deep emerald is the brand colour, gold is a sparing accent, and warm "sand" neutrals keep it from feeling clinical. Light/dark themes and Arabic RTL work out of the box.
 
-- **Live playground, web and native:** _STORYBOOK_URL_. Every story shows the web components; the **Native app** page runs the React Native components in a phone frame in the browser, plus real iOS screenshots
+- **Live playground, web and native:** [mal-design-system.vercel.app](https://mal-design-system.vercel.app). Every story shows the web components; the **Native app** page runs the React Native components in a phone frame in the browser, plus real iOS screenshots
 - **Native app on a device:** `npm run ios` / `npm run android` locally, or the Expo Go QR below for project members
 - **Architecture & trade-offs:** [`docs/architecture-and-tradeoffs.pdf`](docs/architecture-and-tradeoffs.pdf)
 
