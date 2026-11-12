@@ -65,10 +65,12 @@ packages/design-system/
   src/banking/             ← TransactionCard, ZakatCalculator, money: built only from core/
   src/theme/               ← ThemeProvider / useTheme (web + native)
   src/index.ts             ← web entry          src/index.native.ts ← native entry
-  src/docs/                ← Storybook pages and the composed "Home screen" pattern
+  src/docs/                ← Storybook pages and the "Example: Home screen" story
   scripts/                 ← build-tokens.ts, new-component.ts
 apps/mobile/               ← Expo app consuming the package exactly as an external app would
 ```
+
+The folders are a ladder: **tokens → core → banking → screens**. Each level is built only from the one below it, and lint enforces the direction (`core/` can't import `banking/`, components can't hard-code colours). `banking/` is where Mal's domain lives, so Zakat rules, money handling and Sharia wording are written once and every product and platform inherits them.
 
 ### How a component is laid out
 

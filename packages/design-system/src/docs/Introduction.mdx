@@ -13,15 +13,20 @@ The look is trustworthy, modern and minimal. Deep emerald carries the brand, gol
 - The **Accessibility** panel runs axe on every story. **Interactions** shows the `play` tests on Button and ZakatCalculator.
 - Every component has a **Playground** story with live controls.
 
-## What's inside
+## How it's layered
+
+The system is a ladder of four levels. Each level is built only from the one below it, and lint enforces the direction, so a screen can't hard-code a colour and a core control can't learn about money.
+
+| Level | What | Built from | Sidebar |
+| --- | --- | --- | --- |
+| Tokens | `tokens/tokens.json` (W3C DTCG) → Tailwind theme for web, typed values for native | — | Foundations |
+| Core | `Button`, `InputField`, `Badge`, `Icon`: generic controls with no banking knowledge | tokens | Core |
+| Banking | `TransactionCard`, `ZakatCalculator`, `Money`: where Mal's domain lives | core | Banking |
+| Screens | Product screens in the apps. "Example: Home screen" is one, with no custom styling | banking + core | Banking |
+
+The banking layer is the reason this is Mal's system and not a generic kit: Sharia rules, Zakat wording and money handling are written once there, and every product and platform inherits them. New domain pieces (a Halal-investment badge, a compliance indicator) go in that layer, composed from core.
 
 One package, `@mal/design-system`, for **web and React Native**. This playground shows the web implementations; `apps/mobile` in the repo is the same components running natively.
-
-| Part | What | Sidebar |
-| --- | --- | --- |
-| Tokens | `tokens/tokens.json` (W3C DTCG) → Tailwind theme for web, typed values for native | Foundations |
-| Core | `Button`, `InputField`, `Badge`, `Icon`: generic controls with no banking knowledge | Core |
-| Banking | `TransactionCard`, `ZakatCalculator` and `Money` utilities, composed from core | Banking |
 
 Every component is split into `Name.types.ts` (the shared contract), `Name.web.tsx` and `Name.native.tsx`. Logic such as validation, Zakat maths and screen-reader text lives in shared files, so the platforms can't drift apart. A web app importing `Button` gets the web file; a React Native app gets the native one, with no configuration.
 

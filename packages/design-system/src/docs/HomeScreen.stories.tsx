@@ -6,9 +6,9 @@ import { Icon } from '../core/Icon/Icon.web';
 import { InputField } from '../core/InputField/InputField.web';
 
 const meta = {
-  title: 'Patterns/Home screen',
+  title: 'Banking/Example: Home screen',
   parameters: {
-    docs: { description: { story: 'All components composed into a realistic screen to check the system holds together.' } },
+    docs: { description: { story: 'A product screen built only from system components, with no custom styling: the top level of the composition ladder (tokens → core → banking → screens). Check it in dark mode and RTL.' } },
   },
 } satisfies Meta;
 

@@ -62,7 +62,7 @@ const preview: Preview = {
     a11y: { test: 'error' },
     options: {
       storySort: {
-        order: ['Introduction', 'Native app (React Native)', 'Foundations', ['Tokens'], 'Core', 'Banking', 'Patterns', '*'],
+        order: ['Introduction', 'Native app (React Native)', 'Foundations', ['Tokens'], 'Core', 'Banking', '*'],
       },
     },
   },
