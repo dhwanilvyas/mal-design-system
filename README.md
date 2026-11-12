@@ -3,7 +3,7 @@
 A focused, production-minded foundation for Mal's products, on **web and React Native**: JSON design tokens, accessible components, a Storybook playground, and an Expo demo app. It is trustworthy, modern and minimal. Deep emerald is the brand colour, gold is a sparing accent, and warm "sand" neutrals keep it from feeling clinical. Light/dark themes and Arabic RTL work out of the box.
 
 - **Live playground, web and native:** [mal-design-system.vercel.app](https://mal-design-system.vercel.app). Every story shows the web components; the **Native app** page runs the React Native components in a phone frame in the browser, plus real iOS screenshots
-- **Native app on a device:** `npm run ios` / `npm run android` locally, or the Expo Go QR below for project members
+- **Native app on a device:** run it locally with Expo, see [below](#run-the-native-app-on-a-phone)
 - **Architecture & trade-offs:** [below](#architecture--trade-offs): decisions, rollout, governance and measuring impact
 
 | Component | Variants | Notes |
@@ -19,9 +19,7 @@ A focused, production-minded foundation for Mal's products, on **web and React N
 [`apps/mobile`](apps/mobile) is the same components as the web playground, running natively (`.native.tsx`). Toggle dark mode from the header, or let it follow the device.
 
 - **Anyone, from a clone:** `npm install && npm run mobile`, then scan the terminal's QR code with [Expo Go](https://expo.dev/go) (phone on the same Wi-Fi). No account needed on Android; on a physical iPhone, Expo requires Expo Go and the CLI (`npx expo login`) to be signed in to the same free Expo account. `npm run ios` / `npm run android` open a simulator or emulator instead, with no account.
-- **Project members, no clone needed:** sign in to Expo Go with an account that's a member of `@dhwanilvyas/mal-design-system-demo`, then scan the QR code. Expo only serves EAS Updates in Expo Go to signed-in project members, so this isn't a public link. Republish after changes with `npm run publish:mobile`.
-
-<img src="packages/design-system/public/expo-go-qr.png" alt="QR code that opens the published demo in Expo Go, for signed-in project members" width="160" />
+- **Without installing anything:** the [Native app page](https://mal-design-system.vercel.app/?path=/docs/native-app-react-native--docs) of the playground runs the same native components in the browser.
 
 ## One import, the right file for each platform
 
@@ -168,7 +166,7 @@ This creates `Name.types.ts`, `Name.web.tsx`, `Name.native.tsx`, a story and a t
 | --- | --- |
 | `npm run dev` | Storybook with hot reload |
 | `npm run ios` / `npm run android` / `npm run mobile` | Start the Expo demo app locally |
-| `npm run publish:mobile` | Publish the demo app to the `preview` EAS Update channel (what the QR code opens) |
+| `npm run publish:mobile` | Publish the demo app to the `preview` EAS Update channel (opens in Expo Go for signed-in Expo project members) |
 | `npm run tokens` | Regenerate `theme.css` and `tokens.generated.ts` from `tokens.json` |
 | `npm run verify` | Token drift check, `tsc` for web **and** native, ESLint, Vitest (unit + axe + contrast + platform parity) |
 | `npm run build` | Storybook + the native app's browser build (copied to `/native`) in `packages/design-system/storybook-static/` (what Vercel deploys) |
