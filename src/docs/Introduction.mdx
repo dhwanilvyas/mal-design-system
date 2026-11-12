@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+# Mal Design System
+
+A focused foundation for Mal's web products: **tokens, accessible React components, and this playground**.
+The look is trustworthy, modern and minimal. Deep emerald carries the brand, gold is a sparing accent, and warm "sand" neutrals keep it from feeling clinical.
+
+## Try it
+
+- Use the **Theme** and **Direction** toolbar buttons (top bar) to switch light/dark and LTR/RTL (Arabic) on any story.
+- The **Accessibility** panel runs axe on every story. **Interactions** shows the `play` tests on Button and ZakatCalculator.
+- Every component has a **Playground** story with live controls.
+
+## What's inside
+
+| Layer | What | Where |
+| --- | --- | --- |
+| Tokens | Primitives → semantic (light/dark) → generated CSS variables + Tailwind theme | `src/tokens/tokens.ts` |
+| Components | `Button`, `InputField`, `TransactionCard`, `ZakatCalculator` (+ `Badge`, `Icon` primitives) | `src/components/*` |
+| Guardrails | Tailwind default palette removed; WCAG contrast tests on token pairs; axe tests per component; lint bans hex colours | `tokens.test.ts`, `*.test.tsx` |
+
+## Principles
+
+1. **Semantic over literal.** Components say `bg-brand`, never `#0f5644` or `emerald-700`. Themes are a token swap.
+2. **Accessible by construction.** `InputField` cannot exist without a label. Status is never colour-only. Money is announced in words.
+3. **Money is integers.** All amounts are `{ minor, currency }`. Formatting happens at the edge with `Intl`.
+4. **RTL is first-class.** Logical properties (`ms-*`, `text-start`) everywhere, so Arabic layouts mirror without overrides.
